@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from scipy.signal import butter, lfilter
+from scipy.integrate import cumtrapz
+from scipy import interpolate
 
 
 def calculate_rms(df, rms_column):
@@ -8,29 +9,48 @@ def calculate_rms(df, rms_column):
     return rms
 
 
-def butter_lowpass(cutoff, fs, order=5):
-    return butter(order, cutoff, fs=fs, btype='low', analog=False)
+def get_stats_on_cols(df, col):
+    standard_dev = df[col].std()
+    standard_error = standard_dev/np.sqrt(len(df))
+
+    return [standard_dev, standard_error]
 
 
-def butter_lowpass_filter(data, cutoff, fs, order=5):
-    b, a = butter_lowpass(cutoff, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
+def get_stats_on_col_by_groups(df, groupby_col, stats_col):
+
+    stats = pd.DataFrame()
+    grouped_data = df.groupby(groupby_col)
+
+    for iter, group in grouped_data:
+        mean = group[stats_col].mean()
+        stddev = group[stats_col].std()
+        new_row = pd.DataFrame([iter, mean, stddev], columns = [groupby_col, f"{stats_col}_Mean", f"{stats_col}_Std_Dev"])
+        stats = pd.concat([stats, new_row], ignore_index = True)
+
+    return stats
 
 
-def filter_data(df, cols_to_filter, cutoff):
-    for col in cols_to_filter:
-        filtered_col = butter_lowpass_filter(df[col], cutoff, 1000) 
-        new_col_name = col + "_Filt"
-        df[new_col_name] = filtered_col
+def count_data_cycle_number(df, cycle_col):
+    df[f"{cycle_col} Count"] = 0
+    count = 0
+    prev_value = 0
 
+    for index, row in df.iterrows():
+        value = row[cycle_col]
+
+        if value < prev_value:
+            count += 1
+
+        df[f"{cycle_col} Count"] = count
+        prev_value = value
+        
     return df
 
 
-def get_stats_on_columns(data, col):
-    standard_dev = data[col].std()
-    standard_error = standard_dev/np.sqrt(len(data))
+def integrate_data_col(df, col_x, col_y):
+    df = df.reset_index(drop = True)
+    df[f"{col_y}_integral"] = cumtrapz(df[col_y], df{col_y})
 
-    return [standard_dev, standard_error]
+    return df
 
 
