@@ -2,13 +2,13 @@ import pandas as pd
 from scipy import signal
 
 def standardise_data_col(df, col_to_standardise):
-    if col_to_standardise in df.columns:
+    if (col_to_standardise in df.columns) and df[col_to_standardise].dtypes != "object":
         df[col_to_standardise] = df[col_to_standardise] - df.at[0, col_to_standardise]
     return df
 
 
 def normalise_data_col(df, col):
-    if col in df.columns:
+    if col in df.columns and df[col].dtypes != "object":
         df[col] = (df[col] - df[col].mean())
     return df
 
@@ -34,7 +34,7 @@ def start_data_after_first_peak(df, prominence, col):
 
 
 def get_data_with_col_greater_than_val(df, val, col):
-    if col in df.columns:
+    if col in df.columns and df[col].dtypes != "object":
         df = df[df[col] > val].reset_index(drop = True)
     
     return df

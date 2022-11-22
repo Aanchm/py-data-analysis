@@ -5,11 +5,17 @@ from scipy import interpolate
 
 
 def calculate_rms(df, rms_column):
+    if rms_column not in df.columns or df[rms_column].dtypes == "object":
+        return None
+
     rms = np.sqrt(np.mean(df[rms_column] ** 2))
     return rms
 
 
-def get_stats_on_cols(df, col):
+def get_stats_on_col(df, col):
+    if col not in df.columns or df[col].dtypes == "object":
+        return [None, None]
+
     standard_dev = df[col].std()
     standard_error = standard_dev/np.sqrt(len(df))
 
@@ -49,7 +55,7 @@ def count_data_cycle_number(df, cycle_col):
 
 def integrate_data_col(df, col_x, col_y):
     df = df.reset_index(drop = True)
-    df[f"{col_y}_integral"] = cumtrapz(df[col_y], df{col_y})
+    df[f"{col_y}_integral"] = cumtrapz(df[col_y], df[col_x])
 
     return df
 
