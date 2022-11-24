@@ -23,6 +23,8 @@ def get_stats_on_col(df, col):
 
 
 def get_stats_on_col_by_groups(df, groupby_col, stats_col):
+    if groupby_col not in df.columns or stats_col not in df.columns or df[stats_col].dtypes == "object":
+        return None
 
     stats = pd.DataFrame()
     grouped_data = df.groupby(groupby_col)
@@ -30,7 +32,7 @@ def get_stats_on_col_by_groups(df, groupby_col, stats_col):
     for iter, group in grouped_data:
         mean = group[stats_col].mean()
         stddev = group[stats_col].std()
-        new_row = pd.DataFrame([iter, mean, stddev], columns = [groupby_col, f"{stats_col}_Mean", f"{stats_col}_Std_Dev"])
+        new_row = pd.DataFrame({groupby_col: [iter], f"{stats_col}_Mean": [mean], f"{stats_col}_Std_Dev": [stddev]})
         stats = pd.concat([stats, new_row], ignore_index = True)
 
     return stats
@@ -41,7 +43,7 @@ def count_data_cycle_number(df, cycle_col):
     count = 0
     prev_value = 0
 
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         value = row[cycle_col]
 
         if value < prev_value:
