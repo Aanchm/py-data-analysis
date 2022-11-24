@@ -2,10 +2,13 @@
 This contains some basic function blocks for data analysis with python. This is updated as and when functions are needed and is focussed around working with using dataframes and creating plots. 
 
 ## Functions
-clean_data.py: functions to filter a data by certain conditions
-filter_data.py: low and band pass filters
-analyse_data.py: generate statistics on data
-plot_data.py: different types of plots on data (phasors, cartesian, FFTs)
+clean_data.py: functions to filter a data by certain conditions.
+
+filter_data.py: low and band pass filters.
+
+analyse_data.py: generate statistics on data.
+
+plot_data.py: different types of plots on data (phasors, cartesian, FFTs).
 
 
 # Requirements
@@ -31,6 +34,5 @@ plt.style.use('seaborn-whitegrid')
 ```
 
 # Limitations
-- Further tests need to be written against pushing and pulling from Influx
-- More functions needed to be added for working with different data files
-- The Influx data pull and push can be further optimised
+- Further tests need to be written against some functions.
+- Further functionality for analysis, plotting and cleaning can be added. 
